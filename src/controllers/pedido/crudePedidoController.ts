@@ -42,9 +42,9 @@ class crudePedidoController {
   async listByIdUSerStatus(req: Request, res: Response) {
     const { IdUser,status } = req.params;
     try {
-         const validStatus = status === 'PENDENTE' || status === 'CONCLUIDO' ? status : undefined;
+        
       const servicoService = new ServicoService();
-      const servicos = await servicoService.listByUsuario(IdUser,validStatus);
+      const servicos = await servicoService.listByUsuario(IdUser);
       return res.status(200).json(servicos); // Retorna serviços do user
     } catch (error) {
       return res.status(500).json({ error: "Erro ao listar serviços concluídos" });
