@@ -57,9 +57,8 @@ class crudePedidoController {
         return __awaiter(this, void 0, void 0, function* () {
             const { IdUser, status } = req.params;
             try {
-                const validStatus = status === 'PENDENTE' || status === 'CONCLUIDO' ? status : undefined;
                 const servicoService = new ServicoService_1.ServicoService();
-                const servicos = yield servicoService.listByUsuario(IdUser, validStatus);
+                const servicos = yield servicoService.listByUsuario(IdUser);
                 return res.status(200).json(servicos); // Retorna serviços do user
             }
             catch (error) {
