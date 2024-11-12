@@ -51,4 +51,8 @@ router.get("/interacoes", interacaoController.listByServico);
 router.put("/interacoes/:id", interacaoController.update);
 router.delete("/interacoes/:id", interacaoController.delete);
 
+router.get('/ping', (req, res) => {
+  res.send('Server is running');
+});
+
 export {router}
