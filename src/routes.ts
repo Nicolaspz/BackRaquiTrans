@@ -52,7 +52,7 @@ router.put("/interacoes/:id", interacaoController.update);
 router.delete("/interacoes/:id", interacaoController.delete);
 
 router.get('/ping', (req, res) => {
-  res.send('Server is running');
+  res.send('Server is running ++');
 });
 
 export {router}
