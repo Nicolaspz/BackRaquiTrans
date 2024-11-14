@@ -49,16 +49,28 @@ class ServicoService {
   // Método para listar todos os serviços
   async listAll() {
     const servicos = await prismaClient.servico.findMany({
-      select: { // Seleciona os campos que deseja retornar
+     select: {
         id: true,
         descricao: true,
         status: true,
         usuarioId: true,
         tipo: true,
-        Interacao:true
+        created_at:true,
+        Interacao: {  // Certifique-se de que o nome da relação está correto
+        select: {
+        id: true,
+        conteudo: true,
+        autorId: true,
+        tipo: true,
+        criado_em: true,
+          },
+          orderBy: {
+      criado_em: 'desc',  // Ordena as interações pela data de criação, da mais recente para a mais antiga
+    },
+    },
       },
     });
-    return { servicos }; // Retorna os serviços diretamente
+    return  servicos ; // Retorna os serviços diretamente
   }
 
   // Método para listar serviços pendentes
@@ -120,12 +132,13 @@ class ServicoService {
       where: {
         usuarioId,
       },
-      select: {
+      select:{
         id: true,
         descricao: true,
         status: true,
         usuarioId: true,
-        tipo:true,
+        tipo: true,
+        created_at:true,
         Interacao: {  // Certifique-se de que o nome da relação está correto
         select: {
         id: true,
@@ -133,7 +146,10 @@ class ServicoService {
         autorId: true,
         tipo: true,
         criado_em: true,
-      },
+          },
+          orderBy: {
+      criado_em: 'desc',  // Ordena as interações pela data de criação, da mais recente para a mais antiga
+    },
     },
       },
     });

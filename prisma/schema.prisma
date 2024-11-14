@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -17,13 +14,50 @@ model Servico {
   descricao        String?
   data_solicitacao DateTime      @default(now())
   data_atualizacao DateTime      @updatedAt
-  usuario          User          @relation(fields: [usuarioId], references: [id])
   usuarioId        String
   created_at       DateTime?     @default(now())
   updated_at       DateTime?     @default(now())
   Interacao        Interacao[]
+  usuario          User          @relation(fields: [usuarioId], references: [id])
 
+  @@index([usuarioId], map: "servicos_usuarioId_fkey")
   @@map("servicos")
+}
+
+model Interacao {
+  id        String   @id @default(uuid())
+  conteudo  String
+  autorId   String
+  servicoId String
+  criado_em DateTime @default(now())
+  tipo      String
+  autor     User     @relation(fields: [autorId], references: [id])
+  servico   Servico  @relation(fields: [servicoId], references: [id])
+
+  @@index([autorId], map: "interacoes_autorId_fkey")
+  @@index([servicoId], map: "interacoes_servicoId_fkey")
+  @@map("interacoes")
+}
+
+model User {
+  id             String        @id @default(uuid())
+  proces_number  String        @unique
+  name           String
+  email          String        @unique
+  user_name      String
+  nif            String
+  morada         String
+  role           Role
+  redes          String
+  tipo_pagamento TipoPagamento
+  telefone       String        @unique
+  password       String
+  created_at     DateTime?     @default(now())
+  updated_at     DateTime?     @default(now())
+  Interacao      Interacao[]
+  servicos       Servico[]
+
+  @@map("users")
 }
 
 enum TipoServico {
@@ -45,41 +79,7 @@ enum TipoPagamento {
   CONTA_30DIAS
 }
 
-model Interacao {
-  id        String   @id @default(uuid())
-  conteudo  String // Conteúdo da resposta/comentário
-  autor     User     @relation(fields: [autorId], references: [id]) // Autor da interação (admin ou usuário)
-  autorId   String
-  servico   Servico  @relation(fields: [servicoId], references: [id]) // Pedido ao qual pertence a interação
-  servicoId String
-  criado_em DateTime @default(now()) // Data da interação
-  tipo      String
-
-  @@map("interacoes")
-}
-
 enum Role {
   ADMIN
   CLIENT
-}
-
-model User {
-  id             String        @id @default(uuid())
-  proces_number  String        @unique
-  name           String
-  email          String        @unique
-  user_name      String
-  nif            String
-  morada         String
-  role           Role
-  redes          String
-  tipo_pagamento TipoPagamento
-  telefone       String        @unique
-  password       String
-  created_at     DateTime?     @default(now())
-  updated_at     DateTime?     @default(now())
-  servicos       Servico[] // Relacionamento com os serviços
-  Interacao      Interacao[]
-
-  @@map("users")
 }
