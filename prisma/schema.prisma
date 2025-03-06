@@ -94,6 +94,7 @@ enum TipoPagamento {
   CONTA_7DIAS
   CONTA_15DIAS
   CONTA_30DIAS
+  CONTA_24
 }
 
 enum Role {

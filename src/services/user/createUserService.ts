@@ -1,5 +1,5 @@
 import prismaClient from "../../prisma";
-import { hash } from "bcryptjs";
+import { hash, compare  } from "bcryptjs";
 //import { sendEmailToAdmin } from "../../utils/emailService"; // Supondo que você tenha um serviço para enviar e-mail
 
 interface UserRequest {
@@ -118,7 +118,39 @@ class CreateUserService {
   });*/
 
   return { user };
-}
+  }
+  async updatePassword(userId: string, oldPassword: string, newPassword: string) {
+    
+    if (!userId || !oldPassword || !newPassword) {
+      throw new Error("ID do usuário, senha atual e nova senha são obrigatórios.");
+    }
+
+    // Busca o usuário no banco de dados
+    const user = await prismaClient.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user) {
+      throw new Error("Usuário não encontrado.");
+    }
+
+    // Verifica se a senha antiga está correta
+    const passwordMatch = await compare(oldPassword, user.password);
+    if (!passwordMatch) {
+      throw new Error("Senha atual incorreta.");
+    }
+
+    // Hash da nova senha
+    const passwordHashed = await hash(newPassword, 8);
+
+    // Atualiza a senha no banco de dados
+    await prismaClient.user.update({
+      where: { id: userId },
+      data: { password: passwordHashed },
+    });
+
+    return { message: "Senha atualizada com sucesso." };
+  }
 }
 
 export { CreateUserService };
